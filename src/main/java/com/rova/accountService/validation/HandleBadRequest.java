@@ -27,11 +27,4 @@ public class HandleBadRequest {
         });
         return new ResponseEntity<>(new RevoResponse("500", "Something went wrong", errors, null), HttpStatus.BAD_REQUEST);
     }
-
-
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<RevoResponse> genericException(Exception exception) {
-//        Map<String, String> errors = new HashMap<>();
-//        return new ResponseEntity<>(new RevoResponse("500", "Something went wrong", errors, null), HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
 }
