@@ -7,6 +7,7 @@ import com.rova.accountService.dto.GetUserResponse;
 import com.rova.accountService.dto.RevoResponse;
 import com.rova.accountService.dto.CreateUserRequestDto;
 import com.rova.accountService.dto.transactionResponse.TransactionResponseDto;
+import com.rova.accountService.exception.RemoteServiceException;
 import com.rova.accountService.exception.ResourceNotFoundException;
 import com.rova.accountService.http.HttpClient;
 import com.rova.accountService.model.User;
@@ -49,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
             User checkUserExist = userRepository.findByEmail(request.getEmail());
             if(!Objects.isNull(checkUserExist))
-                throw  new ResourceNotFoundException("User with email already exist");
+                throw  new RemoteServiceException("User with email already exist");
 
             User user = new User();
             user.setFirstName(request.getFirstName());
@@ -68,7 +69,7 @@ public class UserServiceImpl implements UserService {
             return responseHelper.getResponse(SUCCESS_CODE, SUCCESS, user, HttpStatus.CREATED);
         }
         catch (Exception e) {
-            return responseHelper.getResponse(FAILED_CODE, FAILED, e.getStackTrace(), HttpStatus.EXPECTATION_FAILED);
+            return responseHelper.getResponse(FAILED_CODE, FAILED, e.getMessage(), HttpStatus.EXPECTATION_FAILED);
         }
     }
 
