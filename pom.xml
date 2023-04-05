@@ -10,9 +10,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.rova</groupId>
-	<artifactId>accountService</artifactId>
+	<artifactId>accountservice</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>transactionService</name>
+	<name>accountservice</name>
 	<description>Rova account service</description>
 	<properties>
 		<java.version>11</java.version>
