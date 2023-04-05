@@ -1,11 +1,14 @@
+# installing java to base docker from amazon 
+#https://github.com/aws/aws-codebuild-docker-images/blob/master/ubuntu/java/openjdk-8/Dockerfile
+#https://github.com/aws/aws-codebuild-docker-images/blob/master/ubuntu/docker/1.12.1/Dockerfile
 version: 0.2
 
 env:
   variables:
+      MAVEN_VERSION: "3.8.1"
       AWS_ACCOUNT_ID : "020960785416"
       IMAGE_REPO_NAME : "rova-account-service"
       IMAGE_TAG : "latest"
-
 
 phases:
   install:
@@ -23,6 +26,7 @@ phases:
         - echo Build started on `date`
         - echo Build started on `date`
         - printenv
+        - mvn package
         - docker build -t $IMAGE_REPO_NAME --build-arg IMAGE_TAG=$IMAGE_TAG .
         - docker images -a
         - echo Building the Docker image...                  
@@ -37,6 +41,6 @@ phases:
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG  
       - echo Writing image definitions file...
       - printf '[{"name":"rova-account-service","imageUri":"%s"}]' $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG > imagedefinitions.json
+      - cat imagedefinitions.json
 artifacts:
-  files:
-    - imagedefinitions.json
+  files: imagedefinitions.json
