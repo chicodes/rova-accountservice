@@ -10,6 +10,7 @@ import com.rova.accountService.repository.AccountRepository;
 import com.rova.accountService.repository.UserRepository;
 import com.rova.accountService.util.HttpCall;
 import com.rova.accountService.util.Utility;
+import okhttp3.Response;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -194,8 +195,9 @@ class UserAccountControllerTest {
         Map map = new HashMap<>();
         map.put("token", "test");
 
+        Response response = null;
         String jsoString = new ObjectMapper().writeValueAsString(json);
-        Mockito.when(httpCall.external("10", map, "http://localhost:3393/api/v1/transaction/customer/10")).thenReturn(json);
+        Mockito.when(httpCall.external("10", map, "http://localhost:3393/api/v1/transaction/customer/10")).thenReturn(response);
 
         Mockito.when(userRepository.save(user)).thenReturn(user);
 
