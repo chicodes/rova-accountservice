@@ -82,12 +82,6 @@ class BankAccountControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
                 .andExpect(jsonPath("$.respCode", Matchers.is("00")))
                 .andExpect(jsonPath("$.respDescription", Matchers.is("SUCCESS")));
-
-//                .andExpect(jsonPath("$.respBody.productId", Matchers.is("1")))
-//                .andExpect(jsonPath("$.respBody.customerName", Matchers.is("John Doe")))
-//                .andExpect(jsonPath("$.respBody.customerPhone", Matchers.is("08033329329")))
-//                .andExpect(jsonPath("$.respBody.customerAddress", Matchers.is("Victoria Island")))
-//                .andExpect(jsonPath("$.respBody.price", Matchers.is("150")));
     }
 
 
