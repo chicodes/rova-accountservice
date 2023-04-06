@@ -31,11 +31,11 @@ public class HttpCall {
 
     private final HttpClient httpClient;
 
-    public String external(String id, Map map, String url){
+    public Response external(String id, Map map, String url){
         try {
 
             Response response = httpClient.get(getHeader(), map, url);
-            return response.body().string();
+            return response;
         }
         catch (Exception e){
             throw new GeneralException("");

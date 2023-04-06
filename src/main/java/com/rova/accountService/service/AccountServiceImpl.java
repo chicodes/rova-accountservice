@@ -51,8 +51,10 @@ public class AccountServiceImpl implements AccountService {
     public RevoResponse createCurrentAccount(CreateAccountRequestDto request){
         try {
 
+            log.info("Customer ID is: {}", request.getCustomerId());
             //check if user with customerId exist
             Optional<User> checkUserExist = userRepository.findById(Long.valueOf(request.getCustomerId()));
+            Optional<User> getuser = userRepository.findById(Long.valueOf(request.getCustomerId()));
             if(!checkUserExist.isPresent()){
                 log.info("User with Customer ID {} does not exist", request.getCustomerId());
                 throw new ResourceNotFoundException("User with Customer ID does not exist");
@@ -60,7 +62,7 @@ public class AccountServiceImpl implements AccountService {
 
             //check if current account has already been opened for this user
             Account checkAccountExist = accountRepository.findByCustomerId(request.getCustomerId());
-            if(Objects.isNull(checkAccountExist))
+            if(!Objects.isNull(checkAccountExist))
                 throw new ResourceNotFoundException("This user already has a current account");
 
             Account account = new Account();
@@ -76,18 +78,15 @@ public class AccountServiceImpl implements AccountService {
             int initialCreditValue = initialCredit.compareTo(BigDecimal.ZERO);
 
             if(initialCreditValue > 0){
-                String url = transactionServiceUrl;
-                log.info("URL: {}",url);
-                log.info("Making POST request to {}", url);
+                log.info("Pushing transaction to Message queue");
                 String jsonRequest = httpClient.toJson(request);
                 log.info("Json Request: {}", jsonRequest);
-
-
                 SendMessageRequest send_msg_request = new SendMessageRequest()
                         .withQueueUrl(sqsUrl)
                         .withMessageBody(jsonRequest)
                         .withDelaySeconds(5);
                 amazonSQS.sendMessage(send_msg_request);
+                log.info("Pransaction pushed to Message queue");
                 return responseHelper.getResponse(SUCCESS_CODE, SUCCESS, account, HttpStatus.CREATED);
             }
             return responseHelper.getResponse(FAILED_CODE, FAILED, null, HttpStatus.EXPECTATION_FAILED);

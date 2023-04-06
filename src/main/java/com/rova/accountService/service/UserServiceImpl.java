@@ -47,11 +47,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public RevoResponse createUser(CreateUserRequestDto request){
         try {
-
+            log.info("checking if user with email exist");
             User checkUserExist = userRepository.findByEmail(request.getEmail());
             if(!Objects.isNull(checkUserExist))
                 throw  new RemoteServiceException("User with email already exist");
 
+            log.info("saving  user");
             User user = new User();
             user.setFirstName(request.getFirstName());
             user.setLastname(request.getLastname());
@@ -77,6 +78,7 @@ public class UserServiceImpl implements UserService {
     public RevoResponse getUserInfo(String id){
 
         try {
+            log.info("check user exist");
             Optional<User> getuser = userRepository.findById(Long.valueOf(id));
             if (!getuser.isPresent())
                 throw new ResourceNotFoundException("User not found");
@@ -84,12 +86,16 @@ public class UserServiceImpl implements UserService {
             GetUserResponse getUserResponse = new GetUserResponse();
             getUserResponse.setUser(getuser);
             Map map = new HashMap<>();
-            map.put("token", "test");
+            //map.put("token", "test");
             String url = transactionServiceUrl + "/customer/" + id;
-            log.info("URL: {}", url);
-            String response = httpCall.external(id, map, url);
+            log.info("getting user transaction from transaction service");
+            Response response = httpCall.external(id, map, url);
+            log.info("Transaction response code: {}", response.isSuccessful());
+            if(response.isSuccessful() == false)
+                return responseHelper.getResponse(SUCCESS_CODE, SUCCESS, getUserResponse, HttpStatus.OK);
+
             log.info("Plain Transaction Response: {}", response);
-            TransactionResponseDto transactionResponseDto = gson.fromJson(response, TransactionResponseDto.class);
+            TransactionResponseDto transactionResponseDto = gson.fromJson(response.body().string(), TransactionResponseDto.class);
             ObjectMapper objectMapper = new ObjectMapper();
             log.info("Transaction Response: {}", objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(transactionResponseDto));
             if (transactionResponseDto.getRespCode().equals("00")){
@@ -101,6 +107,5 @@ public class UserServiceImpl implements UserService {
         catch (Exception e){
             return responseHelper.getResponse(FAILED_CODE, FAILED, e.getMessage(), HttpStatus.EXPECTATION_FAILED);
         }
-
     }
 }

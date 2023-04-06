@@ -28,7 +28,7 @@ If you have docker installed, bring up your terminal, navigate to the root direc
 
 * To run the code run the command below--
 
-  docker run -it -p 1837:81 revoaccountservice
+  docker run -it -p 1837:1837 revoaccountservice
 
 #### Option 2 (Run from IDE)
 
